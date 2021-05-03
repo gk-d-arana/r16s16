@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="LanguageInjectionConfiguration">
+    <injection language="XHTML" injector-id="xml">
+      <display-name>a</display-name>
+      <place>xmlTag().withLocalName(string().equalTo(&quot;a&quot;)).withNamespace(string().equalTo(&quot;http://www.w3.org/1999/html&quot;))</place>
+    </injection>
+  </component>
+</project>

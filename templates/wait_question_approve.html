@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{%block title%}Wait For Admin{%endblock%}
+{%block breadcrumb%}
+  <li class="breadcrumb-item"><a href="{% url 'tags_list' %}">Tags</a></li>
+  <li class="breadcrumb-item active ">Pending</a></li>
+{%endblock%}
+
+{% block content %}
+    <h1 class="text-danger">Wait For Admin</h1>
+        <button type="button" class="btn btn-primary mb-5"><a href="{% url 'home' %}" style="color:white;text-decoration:none;">Back Home</a></button>
+    <h4 class="text-dark"><a href="{% url 'new_question' tag_id %}"> Another Question? </a></h4>
+{% endblock %}

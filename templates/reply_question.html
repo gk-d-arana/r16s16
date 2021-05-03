@@ -1,0 +1,33 @@
+{%extends 'base.html'%}
+{% load static %}
+{%block title%}{{question.question_title}}{%endblock%}
+{%block breadcrumb%}
+
+  <li class="breadcrumb-item "><a href="{% url 'tags_list' %}">Tags</a></li>
+  <li class="breadcrumb-item "><a href="{% url 'tag_questions' question.tag.pk %}">{{ question.tag.tag_name }}</a></li>
+  <li class="breadcrumb-item "><a href="{% url 'question_answers'  question.tag.pk question.pk %}">{{question.question_title}}</a></li>
+  <li class="breadcrumb-item active">Post Reply</li>
+{%endblock%}
+
+
+{% block content %}
+<form method="post" class="mb-4">
+    {%csrf_token%}
+    {%include 'includes/form.html'%}
+      <button type="submit" class="btn btn-success mt-3">Post The Reply</button>
+</form>
+
+{%for answer in question.answers.all%}
+      <div class="col-10">
+            <div class="row mb-3">
+              <div class="col-6">
+                <strong class="text-muted">{{ answer.created_by.username }}</strong>
+              </div>
+              <div class="col-6 text-right">
+                <small class="text-muted">{{ answer.created_date}}</small>
+              </div>
+            </div>
+            {{ answer.answer_text }}
+      </div>
+{%endfor%}
+{% endblock %}

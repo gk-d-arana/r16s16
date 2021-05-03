@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{%block title%}    Search   {%endblock%}
+
+{%block breadcrumb%}
+<li class="breadcrumb-item "><a href="{% url 'tags_list' %}">Tags</a></li>
+    <li class="breadcrumb-item active">Search For Tags And Questions</li>
+{%endblock%}
+
+{% block content%}
+
+<div class="container">
+ <form method="post" class="d-flex input-group w-auto needs-validation" action="{% url 'search' %}" >
+                {% csrf_token %}
+        <input
+          type="search"
+          class="form-control"
+          placeholder="Search For Tags Or Questions"
+          aria-label="Search"
+          name="searched"
+          required
+        />
+        <button
+          class="btn btn-outline-primary"
+          type="submit"
+          data-mdb-ripple-color="dark"
+        >
+          Search
+        </button>
+      </form>
+      <a href="{% url 'home' %}"  class="btn btn-success m-3 "style="
+        color:white;
+        }
+        a:visited{
+        color:white;}">
+      Back To Home
+      </a>
+    </div>
+{% endblock %}

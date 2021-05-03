@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{%block title%}Tags{%endblock%}
+{% load static %}
+{% block style %}
+<style>
+  .user-info{
+    background:blue;
+    }
+
+.user-page{
+       min-height: 400px;	
+}
+
+.user-page-container{
+	 max-width: 800px;
+}
+
+.invisible{
+  display: none !important;
+}
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item active ">User  {{user_profile.username}}</li>
+
+{% endblock %}
+
+
+
+{% block content%}
+
+<div class="card mb-3 p-4">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{% static 'img/user.png' %}" style="max-height: 200px;" id="{{user_profile.pk}}" class="user-id"> 
+    <p class="card-text follows_count mx-5 my-2">{{ followers_count }} Followers</p>
+      {% if request.user != user_profile %}
+            {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'follow_user' user_profile.pk%}" class="follow-form{{user_profile.pk}} check">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary mt-2 mx-5 follow-btn{{user_profile.pk}}">
+      {% if not is_follower %}     
+    Follow
+    {% else %}
+    UnFollow
+    {% endif %}
+    </button>
+</form>
+{% else %}
+    <button type="click" class="btn btn-primary mt-2 mx-5" disabled>Follow</button>
+{% endif %}
+{% endif %}
+
+    </div>
+    <div class=" col-md-12">
+      <div class="card-body">
+        <h1 class="card-title">{{user_profile.username}} Profile</h1>
+<div class="row">
+<div class="col-lg-3 col-md-12  m-1">
+		<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Questions</h5>
+    <p class="card-text">{{user_questions_count}}</p>
+  </div>
+</div>
+</div>
+	<div class="col-lg-3 col-md-12  m-1">
+		<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Answers</h5>
+    <p class="card-text">{{user_answers_count}}</p>
+  </div>
+</div>
+</div>
+	<div class="col-lg-3  col-md-12   m-1">
+		<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Likes</h5>
+    <p class="card-text">{{likes_count}} </p>
+  </div>
+</div>
+</div>
+</div>
+	</div>	       
+         <br/>
+        <p class="card-text"><small class="text-muted">Lastest Question:</small></p>
+        {% if last_question %}
+               <p class="card-text"><small class="text-muted">
+               	<a href="{% url  'question_answers' last_question.tag.pk last_question.pk %}">{{last_question}}</a>
+               </small></p>
+               {% else %}
+               This User Doesn't Have Any Question
+               {% endif %}
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'home' %}" class="btn btn-primary m-3" >Back Home</a>
+
+
+
+<!-- Button trigger modal -->
+<a type="button" class="btn btn-primary" href="{% url 'followers_list' user_profile.pk %}">
+  View Followers
+</a>
+
+
+  {% if request.user == user_profile %}
+  <a href="{% url 'my_account' %}" class="btn btn-primary m-3" >Edit Info</a>
+  {% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+$(document).ready(function(){
+  const user_id = $('.user-id').attr('id')
+  const follow= $(`.follow-form${user_id}`)
+  follow.submit( function(e){
+  if (follow.hasClass('check')){
+        e.preventDefault()
+        const follow_text = $(`.follow-btn${user_id}`).text()
+        const followTrim = $.trim(follow_text)
+        const url= follow.attr('action')
+        const follows = $('.follows_count').text()
+        const followsTrim = parseInt(follows)
+        let res;
+        const request_follower_follow = $('.request-follower')
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data:{
+              'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+             success: function(response) {
+                if (followTrim === 'UnFollow') {
+                  $(`.follow-btn${user_id}`).text('Follow')
+                  res = followsTrim - 1    
+                }
+                else {
+                  $(`.follow-btn${user_id}`).text('UnFollow')
+                  res = followsTrim +1
+                  console.log('in')
+                  };
+                  res = res + 'Followers'
+                   $('.follows_count').text(res)   
+             },
+              error: function(response) {
+                console.log('error', response)
+        }
+        })
+  }
+  });
+})
+</script> 
+{% endblock %}
+
+
+<!--        <a href="{% url 'user_account' request.user.id %}" class="list-group-item list-group-item-action  request-follower" aria-current="true">
+      <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-3">{{request.user}}</h5>
+      <small>Followed {{follower.created}} </small>
+    </div>
+  </a>
+  <a href="{% url 'user_account' follower.following_user.id%}" class="list-group-item list-group-item-action" aria-current="true" id="{{follower.id}}">
+      <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-3">{{follower.following_user.username}}</h5>
+      <small>Followed At {{follower.created}} </small>
+    </div>
+  </a>
+         <div class="list-group">
+             <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">{{user_profile.username}} Doesn't Have Any Followers</h5>
+             </div>
+         </div>-->

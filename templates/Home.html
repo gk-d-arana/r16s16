@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+
+{% block style %}
+.add-tag{
+        display:none;
+      border:2px solid #ced4da;
+      padding:10px;
+      margin:5px;
+}
+
+{% endblock %}
+
+{%block title%}Tags{%endblock%}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item active ">Tags</li>
+
+{% endblock %}
+
+
+
+{% block content%}
+
+{% if user.is_staff %}
+<a class="btn btn-primary m-2 add-tag-btn add-btn text-white">Create Tag</a>
+{% endif %}
+
+<div  class="add-tag">
+<div class="mb-3">
+  <form method="post"  action="{% url 'new_tag' %}">
+    {% csrf_token %}
+  <label for="exampleFormControlInput1" class="form-label">Tag Name</label>
+  <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter Tag Name" required name="tag_name">
+</div>
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Tag Descrtiption</label>
+  <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" required name="tag_description"></textarea>
+</div>
+  <button type="submit" class="btn btn-primary mb-3">Create</button>
+</form>
+</div>
+
+
+
+<table class="table table-striped">
+    <thead class="thead bg-dark text-white">
+    <tr>
+      <th>Tags</th>
+      <th>Answers</th>
+      <th>Question</th>
+      <th>Last Answer</th>
+    </tr>
+    </thead>
+  <tbody>
+  {%for tag in tags%}
+  <tr>
+    <td>
+       <a href="{% url 'tag_questions' tag.pk%}">{{tag.tag_name}}</a>
+        <small class="text-muted d-block">{{tag.tag_description}}</small>
+    </td>
+        <td>{{tag.get_answers_count}}</td>
+        <td>{{tag.questions.count}} </td>
+    <td>
+       {% with answer=tag.get_last_answer%}
+        {%if answer%}
+        by {{answer.created_by.username}} at {{answer.created_date}}
+        {%else%}
+            <small>No Answers</small>
+        {%endif%}
+        {%endwith%}
+    </td>
+  </tr>
+  {%endfor%}
+
+  </tbody>
+</table>
+{% if tags.has_other_pages %}
+  <nav aria-label="Tags pagination" class="mb-4">
+    <ul class="pagination">
+      {% if tags.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ tags.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Previous</span>
+        </li>
+      {% endif %}
+
+      {% for page_num in tags.paginator.page_range %}
+        {% if tags.number == page_num %}
+          <li class="page-item active">
+            <span class="page-link">
+              {{ page_num }}
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if tags.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ tags.next_page_number }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Next</span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+  $(document).ready(function(){
+           $('.add-tag-btn').on("click", function() {
+        var add = $(this);
+        if ( add.hasClass('add-btn') ) {
+            $('.add-tag').toggle('slow',function(){
+              add.text('Close')
+            })
+            add.removeClass('add-btn').addClass('close-btn');
+        }
+        else if( add.hasClass('close-btn') ) {
+            $('.add-tag').toggle('slow', function(){
+                add.text('Create Tag')
+            })
+            add.removeClass('close-btn').addClass('add-btn');
+        }
+    });
+    });
+  </script>
+{% endblock %}

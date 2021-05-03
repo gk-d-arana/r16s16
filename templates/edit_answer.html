@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{% load widget_tweaks %}
+{%block title%}Edit Answer{%endblock%}
+{%block breadcrumb%}
+        <li class="breadcrumb-item "><a href="{% url 'tags_list' %}">Tags</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'tag_questions' answer.question.tag.pk%}">{{ answer.question.tag.tag_name }}</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'question_answers' answer.question.tag.pk answer.question.pk %}">{{answer.question.question_title}}</a></li>
+        <li class="breadcrumb-item active">Edit Answer</li>
+{% endblock %}
+
+{% block content %}
+  <form method="post" novalidate class="mb-4">
+    {% csrf_token %}
+    {% include 'includes/form.html' %}
+    <button type="submit" class="btn btn-success">Update</button>
+  </form>
+{% endblock %}

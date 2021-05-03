@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pending Questions{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'tags_list' %}">Tags</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'tag_questions' tag.pk%}">{{tag.tag_name}} Questions</a></li>
+  <li class="breadcrumb-item active ">Pending Questions</a></li>
+{% endblock %}
+
+{% block content %}
+        <div class="no_pending mb-4" style="display:none;">
+        <h1 class="text-dark mb-4">No Pending Questions</h1>
+        <button type="button" class="btn btn-primary m-5"><a href="{% url 'tags_list' %}" style="color:white;text-decoration:none;">Back Home</a></button>
+            </div>
+{% if pending_questions %}
+    <div class="row all">
+        <form method="post" action="{% url 'approve_all_questions' %}">
+            {% csrf_token %}
+        <button type="submit" class="btn btn-primary m-2 button_jq">Approve All</button>
+        </form>
+        <form method="post" action="{% url 'unapprove_all_questions' %}">
+                    {% csrf_token %}
+        <button type="submit" class="btn btn-danger m-2 button_jq">Delete All</button>
+        </form>
+    </div>
+    {% for pending_question in pending_questions %}
+    <div class="container container_jq{{pending_question.pk}}" >
+        <div class="row1" id="{{pending_question.pk}}">
+        <div class="row"> 
+        <div class="card mb-3 col-8">
+            <div class="card-body ">
+              <h3>{{pending_question.pending_question_title}}</h3>
+                    <p>{{pending_question.pending_question_description}}</p>
+            </div>
+          </div>
+              <div class="col-4">
+                  <form method="post" action="{% url 'approve_question' pending_question.pk %}" class="approve_form">
+                      {% csrf_token %}
+                  <button type="submit" class="btn btn-primary m-2 approve_button" id="{{pending_question.pk}}">Approve</button>
+                  </form>
+                  <form method="post" action="{% url 'unapprove_question' pending_question.pk %}"  class="delete_form">
+                      {% csrf_token %}
+                  <button type="submit" class="btn btn-danger m-2 delete_button" id="delete{{pending_question.pk}}">Delete</button>
+                  </form>
+              </div>
+        </div>
+            </div>
+
+    {% endfor %}
+{% else %}
+        <div class="no_pending">
+        <h1 class="text-dark">No Pending Questions</h1>
+        <button type="button" class="btn btn-primary mt-4"><a href="{% url 'tags_list' %}" style="color:white;text-decoration:none;">Back To Tags List</a></button>
+            </div>
+{% endif %}
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('.approve_button').on('click', function(e){
+            e.preventDefault();
+            var $this = $(this);
+            var dest_url = $('.approve_form').attr('action');
+            $.ajax({
+                 url: dest_url ,
+                 type: 'GET',
+                 dataType: 'json',
+                 success: function(response) {
+                    if (response.message === 'success'){
+                        $this.parents('.row1').fadeOut("slow", function(){
+                            $this.parents('.row1').remove();
+                        });
+                    }
+                    if (response.pending_questions_count === 0) {
+                        $('.no_pending').fadeIn("slow");
+                        $('.all').fadeOut("slow");
+                    };
+                 },
+                 error: function(response){
+                     console.log("Something Went Error") 
+                 }
+            });
+            return false;
+        })
+        $('.delete_button').on('click', function(e){
+            e.preventDefault();
+            var $this = $(this);
+            var dest_url2 = $('.delete_form').attr('action');
+            console.log(dest_url2)
+            $.ajax({
+                 url: dest_url2 ,
+                 type: 'GET',
+                 dataType: 'json',
+                 success: function(response) {
+                    if (response.message === 'success'){
+                        $this.parents('.row1').fadeOut("slow", function(){
+                            $this.parents('.row1').remove();
+                        });
+                    }
+                     if (response.pending_questions_count === 0) {
+                        $('.no_pending').fadeIn("slow");
+                        $('.all').fadeOut(2000);
+                    };
+                 },
+                 error: function(response){
+                     console.log("Something Went Error") 
+                 }
+            });
+            return false;
+        })
+    });
+</script>
+{% endblock %}

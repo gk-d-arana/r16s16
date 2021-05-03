@@ -1,0 +1,81 @@
+{%extends 'base.html'%}
+{%block title%}{{tag.name}}{%endblock%}
+{%block breadcrumb%}
+        <li class="breadcrumb-item "><a href="{% url 'tags_list' %}">Tags</a></li>
+              <li class="breadcrumb-item active">{{tag.name}}</li>
+{%endblock%}
+{%block content%}
+
+
+    <a href="{% url 'new_question' tag.pk%}" class="btn btn-primary m-1">New Question</a>
+
+
+
+    {% if user.is_staff %}
+    <a href="{% url 'pending_questions' tag.pk %}" class="btn btn-primary m-1">Pending Questions</a>
+    {% endif %}
+
+
+<table class="table table-striped">
+    <thead class="thead bg-dark text-white">
+    <tr>
+        <th>Question</th>
+        <th>Created by</th>
+        <th>Answers</th>
+        <th>Views</th>
+        <th>Created date</th>
+    </tr>
+    </thead>
+    <tbody>
+    {%for question in questions%}
+    <tr>
+        <td><a href="{%  url 'question_answers' tag.pk question.pk %}">{{ question.question_title}}</a></td>
+        <td>{{ question.created_by.username }}</td>
+        <td>{{question.comments}}</td>
+        <td>{{question.views}}</td>
+        <td>{{ question.created_date }}</td>
+    </tr>
+    {%endfor%}
+    </tbody>
+</table>
+{% if questions.has_other_pages %}
+  <nav aria-label="Topics pagination" class="mb-4">
+    <ul class="pagination">
+      {% if questions.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ questions.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Previous</span>
+        </li>
+      {% endif %}
+
+      {% for page_num in questions.paginator.page_range %}
+        {% if questions.number == page_num %}
+          <li class="page-item active">
+            <span class="page-link">
+              {{ page_num }}
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if questions.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ questions.next_page_number }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Next</span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+{%endblock%}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">'
+	<title>Confirmation</title>
+	<style type="text/css">
+		h1{
+			color: blue;
+		}
+	</style>
+</head>
+<body>
+	{% if success %}
+		You've Confirmed Your Email
+	{% else %}
+		Error,Invalid Token
+	{% endif %}
+</body>
+</html>

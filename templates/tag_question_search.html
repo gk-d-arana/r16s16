@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{%block title%}    Your Search Results For  {{ searched }}  {%endblock%}
+
+{%block breadcrumb%}
+<li class="breadcrumb-item "><a href="{% url 'tags_list' %}">Tags</a></li>
+    <li class="breadcrumb-item active">Your Search Results</li>
+{%endblock%}
+
+{% block content%}
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <h1 class="text-dark mb-3">Related Tags:</h1>
+      {% if tags %}
+      <div class="row">
+      {% for tag in tags %}
+        <div class="col-12 mb-3">
+          <div class="card">
+      <!--<img src="..." class="card-img-top" alt="...">-->
+      <div class="card-body">
+        <h5 class="card-title">{{ tag.tag_name }}</h5>
+        <p class="card-text">{{tag.tag_description}}</p>
+        <a href="{% url 'tag_questions' tag.pk %}" class="btn btn-primary sm-3">Questions From This Tag</a>
+      </div>
+    </div>
+        </div>
+            {% endfor %}
+        </div>
+    {% else %}
+    <p class="text-dark">No Results For Your Search {{ searched }}</p>
+    {% endif %}
+</div>
+    <div class="col-6">
+    <h1 class="text-dark mb-3">Related Questions:</h1>
+    {% if questions %}
+      <div class="row">
+      {% for question in questions %}
+          <div class="col-12 mb-3">
+          <div class="card">
+      <!--<img src="..." class="card-img-top" alt="...">-->
+      <div class="card-body">
+        <h5 class="card-title">{{ question.question_title }}</h5>
+        <p class="card-text">{{question.question_description}}</p>
+        <a href="{% url 'question_answers' question.tag.pk question.pk %}" class="btn btn-primary">View Answers</a>
+      </div>
+    </div>
+        </div>
+        {% endfor %}
+
+</div>
+    {% else %}
+    <p class="text-dark">No Results For Your Search {{ searched }}</p>
+    {% endif %}
+  </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

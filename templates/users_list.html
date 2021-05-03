@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}Users{%endblock%}
+{%block breadcrumb%}
+    <li class="breadcrumb-item active">Users</li>
+{%endblock%}
+{% block content%}
+
+{% for user in users %}
+           <div class="col-12 mb-3">
+          <div class="card">
+      <img src="{% static 'img/user.png' %}" class="card-img-top mx-3 mt-2" alt="{{user.username}}" style="max-width: 100px;">
+      <div class="card-body">
+        <h5 class="card-title">{{user.username}}</h5>
+        <p class="card-text">Joined In {{user.date_joined}}</p>
+        <a href="{% url 'user_account' user.pk %}" class="btn btn-primary">View Profile</a>
+      </div>
+    </div>
+        </div> 
+        {% endfor %}
+{% if users.has_other_pages %}
+  <nav aria-label="users pagination" class="mb-4">
+    <ul class="pagination">
+      {% if users.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ users.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Previous</span>
+        </li>
+      {% endif %}
+
+      {% for page_num in users.paginator.page_range %}
+        {% if users.number == page_num %}
+          <li class="page-item active">
+            <span class="page-link">
+              {{ page_num }}
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if users.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ users.next_page_number }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Next</span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+{%endblock%}

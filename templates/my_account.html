@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{%block title%}My Account{%endblock%}
+{%block breadcrumb%}
+    <li class="breadcrumb-item active">My Account</li>
+{%endblock%}
+{% block content%}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include 'includes/form.html' %}
+    <button type="submit" class="btn btn-success m-3">Save Changes</button
+  </form>
+    <button type="button" class="btn btn-success m-3">
+      <a href="{% url 'home' %}" style="
+        color:white;
+        }
+        a:visited{
+        color:white;}">
+      Back To Home
+      </a>
+    </button>
+{%endblock%}
